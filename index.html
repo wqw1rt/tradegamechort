@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRADE — мини-игра</title>
+
+  <style>
+    :root {
+      --bg: #080b14;
+      --panel: rgba(20, 25, 42, 0.9);
+      --panel-light: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --muted: #a8b0c5;
+      --accent: #7c5cff;
+      --accent-2: #00d4ff;
+      --success: #38e69a;
+      --danger: #ff667d;
+      --border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(124, 92, 255, 0.25), transparent 30%),
+        radial-gradient(circle at 85% 85%, rgba(0, 212, 255, 0.18), transparent 30%),
+        var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 30px rgba(124, 92, 255, 0.35);
+    }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .progress {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.4s ease;
+    }
+
+    .screen {
+      display: none;
+      animation: appear 0.45s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 48px 24px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: 0 25px 90px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-logo {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 22px;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      font-size: 42px;
+      font-weight: 1000;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:
+        0 0 0 10px rgba(124, 92, 255, 0.08),
+        0 0 60px rgba(0, 212, 255, 0.2);
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(34px, 7vw, 64px);
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: clamp(25px, 5vw, 38px);
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #a994ff, #57e8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 550px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .button {
+      border: 0;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 15px 24px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--accent), #5c9dff);
+      box-shadow: 0 10px 25px rgba(124, 92, 255, 0.25);
+      transition: 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 32px rgba(124, 92, 255, 0.35);
+    }
+
+    .button:active {
+      transform: scale(0.97);
+    }
+
+    .button.secondary {
+      background: var(--panel-light);
+      box-shadow: none;
+      border: 1px solid var(--border);
+    }
+
+    .button.success {
+      background: linear-gradient(135deg, #18b878, #38e69a);
+      color: #06150e;
+    }
+
+    .game-panel {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 28px;
+      padding: clamp(20px, 4vw, 38px);
+      box-shadow: 0 25px 90px rgba(0, 0, 0, 0.25);
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+
+    .round-badge {
+      white-space: nowrap;
+      padding: 9px 13px;
+      border-radius: 100px;
+      color: #dcd6ff;
+      background: rgba(124, 92, 255, 0.15);
+      border: 1px solid rgba(124, 92, 255, 0.25);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .item-card {
+      position: relative;
+      min-height: 170px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
+      cursor: pointer;
+      transition: 0.22s ease;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .item-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 92, 255, 0.8);
+      background: rgba(124, 92, 255, 0.12);
+    }
+
+    .item-card.selected {
+      border-color: var(--accent-2);
+      background: rgba(0, 212, 255, 0.12);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12);
+    }
+
+    .item-card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: -45px;
+      bottom: -45px;
+      border-radius: 50%;
+      background: rgba(124, 92, 255, 0.12);
+    }
+
+    .item-icon {
+      font-size: 46px;
+      margin-bottom: 18px;
+    }
+
+    .item-name {
+      font-weight: 850;
+      margin-bottom: 5px;
+    }
+
+    .item-value {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .trade-layout {
+      display: grid;
+      grid-template-columns: 1fr 70px 1fr;
+      align-items: center;
+      gap: 15px;
+      margin-top: 28px;
+    }
+
+    .trade-box {
+      min-height: 210px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
+      padding: 22px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .trade-box.highlight {
+      border-color: rgba(56, 230, 154, 0.5);
+      background: rgba(56, 230, 154, 0.07);
+    }
+
+    .trade-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .trade-icon {
+      font-size: 65px;
+      margin-bottom: 12px;
+    }
+
+    .trade-name {
+      font-weight: 900;
+    }
+
+    .trade-arrow {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .offers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .offer {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.045);
+      color: white;
+      padding: 17px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s ease;
+    }
+
+    .offer:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      background: rgba(124, 92, 255, 0.1);
+    }
+
+    .offer.correct {
+      border-color: var(--success);
+      background: rgba(56, 230, 154, 0.12);
+    }
+
+    .offer.wrong {
+      border-color: var(--danger);
+      background: rgba(255, 102, 125, 0.1);
+    }
+
+    .offer-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .offer-name {
+      font-weight: 850;
+      margin-bottom: 6px;
+    }
+
+    .offer-description {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 18px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .message.success {
+      color: var(--success);
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .bottom-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .result-icon {
+      font-size: 75px;
+      margin-bottom: 20px;
+      animation: bounce 1.2s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0) rotate(-4deg);
+      }
+      to {
+        transform: translateY(-10px) rotate(4deg);
+      }
+    }
+
+    .result-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #dcd6ff;
+      background: rgba(124, 92, 255, 0.12);
+      border: 1px solid rgba(124, 92, 255, 0.25);
+      padding: 10px 15px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 25px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #69728c;
+      font-size: 11px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .progress-wrap {
+        width: 100%;
+        max-width: none;
+      }
+
+      .hero {
+        padding: 35px 18px;
+        border-radius: 24px;
+      }
+
+      .game-panel {
+        padding: 20px 15px;
+        border-radius: 23px;
+      }
+
+      .items-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .item-card {
+        min-height: 145px;
+      }
+
+      .item-icon {
+        font-size: 38px;
+      }
+
+      .trade-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .trade-arrow {
+        margin: 0 auto;
+        transform: rotate(90deg);
+      }
+
+      .trade-box {
+        min-height: 155px;
+      }
+
+      .trade-icon {
+        font-size: 48px;
+      }
+
+      .offers {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .items-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .item-card {
+        padding: 13px;
+      }
+
+      .item-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+      }
+
+      .item-name {
+        font-size: 13px;
+      }
+
+      .item-value {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <span>TRADE</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Прогресс игры</span>
+          <span id="progressText">0 / 3</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Стартовый экран -->
+    <section class="screen active" id="startScreen">
+      <div class="hero">
+        <div class="hero-logo">T</div>
+
+        <div class="eyebrow">Мини-игра от TRADE</div>
+
+        <h1>
+          Обменивайся.<br />
+          <span class="gradient">Выигрывай.</span>
+        </h1>
+
+        <p class="subtitle">
+          Проверь свою интуицию в трёх быстрых раундах обмена.
+          Выбирай предметы, находи выгодные предложения и открой
+          настоящий marketplace TRADE.
+        </p>
+
+        <button class="button" id="startButton">
+          Начать игру →
+        </button>
+      </div>
+
+      <div class="footer-note">
+        Быстрая игра • Бесплатно • Работает на телефоне
+      </div>
+    </section>
+
+    <!-- Раунд 1 -->
+    <section class="screen" id="round1Screen">
+      <div class="game-panel">
+        <div class="question-top">
+          <div>
+            <div class="eyebrow">Раунд 1</div>
+            <h2>Выбери предмет для обмена</h2>
+          </div>
+          <div class="round-badge">1 из 3</div>
+        </div>
+
+        <p class="subtitle" style="margin-left: 0; margin-right: 0;">
+          Что бы ты выставил на TRADE прямо сейчас?
+        </p>
+
+        <div class="items-grid" id="itemsGrid"></div>
+
+        <div class="hint">
+          Нажми на любую карточку, чтобы продолжить.
+        </div>
+      </div>
+    </section>
+
+    <!-- Раунд 2 -->
+    <section class="screen" id="round2Screen">
+      <div class="game-panel">
+        <div class="question-top">
+          <div>
+            <div class="eyebrow">Раунд 2</div>
+            <h2>Найди выгодный обмен</h2>
+          </div>
+          <div class="round-badge">2 из 3</div>
+        </div>
+
+        <p class="subtitle" style="margin-left: 0; margin-right: 0;">
+          Какое предложение выглядит наиболее выгодным?
+        </p>
+
+        <div class="trade-layout">
+          <div class="trade-box">
+            <div class="trade-title">Твой предмет</div>
+            <div class="trade-icon" id="selectedIcon">🎧</div>
+            <div class="trade-name" id="selectedName">Наушники</div>
+          </div>
+
+          <div class="trade-arrow">⇄</div>
+
+          <div class="trade-box highlight">
+            <div class="trade-title">Выбери результат</div>
+            <div class="trade-icon">❔</div>
+            <div class="trade-name">Что получишь?</div>
+          </div>
+        </div>
+
+        <div class="offers" id="offersGrid"></div>
+
+        <div class="message" id="round2Message"></div>
+      </div>
+    </section>
+
+    <!-- Раунд 3 -->
+    <section class="screen" id="round3Screen">
+      <div class="game-panel">
+        <div class="question-top">
+          <div>
+            <div class="eyebrow">Раунд 3</div>
+            <h2>Последний выбор</h2>
+          </div>
+          <div class="round-badge">3 из 3</div>
+        </div>
+
+        <p class="subtitle" style="margin-left: 0; margin-right: 0;">
+          Какой вариант лучше подходит для настоящего обмена?
+        </p>
+
+        <div class="offers" id="finalOffers"></div>
+
+        <div class="message" id="round3Message"></div>
+      </div>
+    </section>
+
+    <!-- Финальный экран -->
+    <section class="screen" id="resultScreen">
+      <div class="hero">
+        <div class="result-icon">🎉</div>
+
+        <div class="eyebrow">Игра завершена</div>
+
+        <h1>
+          Ты готов к <span class="gradient">TRADE</span>
+        </h1>
+
+        <p class="subtitle">
+          Отличная работа! Теперь попробуй обменивать настоящие
+          вещи, находить интересные предложения и создавать свои объявления.
+        </p>
+
+        <div class="result-stat">
+          ✓ Все 3 раунда пройдены
+        </div>
+
+        <br />
+
+        <button class="button success" id="goToTradeButton">
+          Перейти на TRADE →
+        </button>
+
+        <div class="bottom-actions">
+          <button class="button secondary" id="restartButton">
+            Играть снова
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        TRADE — место, где вещи находят новых владельцев.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*
+    */
+    const TRADE_URL = "https://ekaterinamuraveva915-collab.github.io/TRADEE/";
+
+    const items = [
+      {
+        icon: "🎧",
+        name: "Наушники",
+        value: "до 80 €"
+      },
+      {
+        icon: "⌚",
+        name: "Смарт-часы",
+        value: "до 120 €"
+      },
+      {
+        icon: "🎮",
+        name: "Игровой контроллер",
+        value: "до 60 €"
+      },
+      {
+        icon: "📷",
+        name: "Камера",
+        value: "до 250 €"
+      },
+      {
+        icon: "👟",
+        name: "Кроссовки",
+        value: "до 100 €"
+      },
+      {
+        icon: "📱",
+        name: "Смартфон",
+        value: "до 400 €"
+      }
+    ];
+
+    const screens = {
+      start: document.getElementById("startScreen"),
+      round1: document.getElementById("round1Screen"),
+      round2: document.getElementById("round2Screen"),
+      round3: document.getElementById("round3Screen"),
+      result: document.getElementById("resultScreen")
+    };
+
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+
+    let currentRound = 0;
+    let selectedItem = null;
+
+    function showScreen(screenName) {
+      Object.values(screens).forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+      screens[screenName].classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function updateProgress(round) {
+      currentRound = round;
+      progressText.textContent = `${round} / 3`;
+      progressBar.style.width = `${(round / 3) * 100}%`;
+    }
+
+    function renderItems() {
+      const grid = document.getElementById("itemsGrid");
+      grid.innerHTML = "";
+
+      items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+
+        card.innerHTML = `
+          <div class="item-icon">${item.icon}</div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-value">${item.value}</div>
+        `;
+
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".item-card").forEach(el => {
+            el.classList.remove("selected");
+          });
+
+          card.classList.add("selected");
+          selectedItem = item;
+
+          setTimeout(() => {
+            prepareRound2();
+            updateProgress(2);
+            showScreen("round2");
+          }, 300);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function prepareRound2() {
+      document.getElementById("selectedIcon").textContent = selectedItem.icon;
+      document.getElementById("selectedName").textContent = selectedItem.name;
+
+      const offersGrid = document.getElementById("offersGrid");
+      const message = document.getElementById("round2Message");
+
+      message.textContent = "";
+      message.className = "message";
+      offersGrid.innerHTML = "";
+
+      const offers = [
+        {
+          icon: "🪨",
+          name: "Случайный камень",
+          description: "Красивый, но почти бесполезный предмет.",
+          correct: false
+        },
+        {
+          icon: "💻",
+          name: "Аксессуар для техники",
+          description: "Полезная вещь, которая хорошо дополняет твой инвентарь.",
+          correct: true
+        },
+        {
+          icon: "🧦",
+          name: "Один носок",
+          description: "Второй потерялся, но предложение звучит весело.",
+          correct: false
+        },
+        {
+          icon: "📦",
+          name: "Пустая коробка",
+          description: "Коробка от дорогого устройства. Но внутри ничего нет.",
+          correct: false
+        }
+      ];
+
+      offers.forEach(offer => {
+        const button = document.createElement("button");
+        button.className = "offer";
+
+        button.innerHTML = `
+          <div class="offer-icon">${offer.icon}</div>
+          <div class="offer-name">${offer.name}</div>
+          <div class="offer-description">${offer.description}</div>
+        `;
+
+        button.addEventListener("click", () => {
+          if (offer.correct) {
+            button.classList.add("correct");
+            message.textContent = "✓ Отличный выбор! Это действительно полезный обмен.";
+            message.className = "message success";
+
+            document.querySelectorAll(".offer").forEach(el => {
+              el.disabled = true;
+              el.style.cursor = "default";
+            });
+
+            setTimeout(() => {
+              prepareRound3();
+              updateProgress(3);
+              showScreen("round3");
+            }, 900);
+          } else {
+            button.classList.add("wrong");
+            message.textContent = "Не самый выгодный вариант. Попробуй ещё раз.";
+            message.className = "message error";
+
+            setTimeout(() => {
+              button.classList.remove("wrong");
+            }, 600);
+          }
+        });
+
+        offersGrid.appendChild(button);
+      });
+    }
+
+    function prepareRound3() {
+      const finalOffers = document.getElementById("finalOffers");
+      const message = document.getElementById("round3Message");
+
+      message.textContent = "";
+      message.className = "message";
+      finalOffers.innerHTML = "";
+
+      const finalOptions = [
+        {
+          icon: "🔁",
+          name: "Обмен напрямую",
+          description: "Договориться с другим пользователем и обменяться вещами.",
+          correct: true
+        },
+        {
+          icon: "🗑️",
+          name: "Выбросить предмет",
+          description: "Просто избавиться от вещи без обмена.",
+          correct: false
+        },
+        {
+          icon: "🔒",
+          name: "Спрятать предмет",
+          description: "Никому не показывать свою вещь.",
+          correct: false
+        },
+        {
+          icon: "💸",
+          name: "Купить случайную вещь",
+          description: "Потратить деньги, даже если обмен был возможен.",
+          correct: false
+        }
+      ];
+
+      finalOptions.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "offer";
+
+        button.innerHTML = `
+          <div class="offer-icon">${option.icon}</div>
+          <div class="offer-name">${option.name}</div>
+          <div class="offer-description">${option.description}</div>
+        `;
+
+        button.addEventListener("click", () => {
+          if (option.correct) {
+            button.classList.add("correct");
+            message.textContent = "✓ Верно! Именно для этого создан TRADE.";
+            message.className = "message success";
+
+            document.querySelectorAll("#finalOffers .offer").forEach(el => {
+              el.disabled = true;
+              el.style.cursor = "default";
+            });
+
+            setTimeout(() => {
+              updateProgress(3);
+              showScreen("result");
+            }, 900);
+          } else {
+            button.classList.add("wrong");
+            message.textContent = "Попробуй вариант, связанный с обменом.";
+            message.className = "message error";
+
+            setTimeout(() => {
+              button.classList.remove("wrong");
+            }, 600);
+          }
+        });
+
+        finalOffers.appendChild(button);
+      });
+    }
+
+    document.getElementById("startButton").addEventListener("click", () => {
+      updateProgress(1);
+      renderItems();
+      showScreen("round1");
+    });
+
+    document.getElementById("goToTradeButton").addEventListener("click", () => {
+      window.location.href = TRADE_URL;
+    });
+
+    document.getElementById("restartButton").addEventListener("click", () => {
+      selectedItem = null;
+      updateProgress(0);
+      showScreen("start");
+    });
+  </script>
+</body>
+</html>
