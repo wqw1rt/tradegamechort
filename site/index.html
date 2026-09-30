@@ -1,0 +1,3956 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRADE — Обмен вещами</title>
+
+  <style>
+    :root {
+      --accent: #ff7a00;
+      --accent-hover: #ff9638;
+      --bg: #0b0d10;
+      --surface: #15191f;
+      --surface-2: #202630;
+      --text: #f5f7fa;
+      --muted: #9da8b6;
+      --border: #303946;
+      --danger: #ff5570;
+      --success: #36d27b;
+      --warning: #f4b942;
+      --shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    body.light {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface-2: #edf0f4;
+      --text: #17202a;
+      --muted: #687585;
+      --border: #d8dee7;
+      --shadow: 0 15px 45px rgba(20, 30, 50, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .nav button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .small-btn,
+    .secondary {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 11px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .icon-btn:hover,
+    .small-btn:hover,
+    .secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .small-btn {
+      padding: 9px 12px;
+    }
+
+    .primary,
+    .danger,
+    .secondary {
+      border-radius: 12px;
+      padding: 12px 17px;
+      font-weight: 800;
+    }
+
+    .primary {
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .danger {
+      border: 0;
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .success-btn {
+      border: 0;
+      background: var(--success);
+      color: #062b16;
+      border-radius: 12px;
+      padding: 12px 17px;
+      font-weight: 800;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 190px;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .user-chip-avatar {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--accent);
+    }
+
+    .user-chip-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 7px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .hero-main {
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+      padding: 42px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--accent), #d83d00);
+      color: #fff;
+    }
+
+    .hero-main::after {
+      content: "⇄";
+      position: absolute;
+      right: 20px;
+      bottom: -65px;
+      font-size: 280px;
+      font-weight: 900;
+      opacity: 0.13;
+      transform: rotate(-15deg);
+    }
+
+    .hero-main > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-main h1 {
+      margin: 0 0 20px;
+      max-width: 650px;
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -3px;
+    }
+
+    .hero-main p {
+      max-width: 590px;
+      line-height: 1.6;
+    }
+
+    .hero-main .primary {
+      margin-top: 14px;
+      background: #fff;
+      color: #c94a00;
+    }
+
+    .stats-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 22px;
+      padding: 26px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 17px;
+    }
+
+    .stat:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .stat strong {
+      font-size: 32px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .section {
+      margin-top: 44px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 29px;
+      letter-spacing: -1px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 7px 0 0;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 190px 190px 130px;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .category {
+      white-space: nowrap;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-weight: 800;
+    }
+
+    .category.active,
+    .category:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-width: 0;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      transition: 0.2s;
+      box-shadow: var(--shadow);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #738092;
+    }
+
+    .visual {
+      position: relative;
+      height: 210px;
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+
+    .visual img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .status-badge {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.72);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .heart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 37px;
+      height: 37px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .heart.active {
+      color: #ff5470;
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .desc {
+      min-height: 40px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 13px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 7px;
+      font-size: 12px;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 48px 20px;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 23px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .feature .emoji {
+      font-size: 30px;
+      margin-bottom: 13px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 60px;
+      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.72);
+    }
+
+    .modal-bg.open {
+      display: flex;
+    }
+
+    .modal {
+      position: relative;
+      width: min(600px, 100%);
+      max-height: 93vh;
+      overflow-y: auto;
+      padding: 25px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal.wide {
+      width: min(900px, 100%);
+    }
+
+    .close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 19px;
+    }
+
+    .modal h2 {
+      margin: 0 35px 20px 0;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .detail-img {
+      width: 100%;
+      height: 310px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 18px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-row span {
+      color: var(--muted);
+    }
+
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      background: var(--surface-2);
+    }
+
+    .profile-head h3 {
+      margin: 0 0 5px;
+      font-size: 23px;
+    }
+
+    .profile-head p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .profile-stat {
+      padding: 15px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      text-align: center;
+    }
+
+    .profile-stat strong {
+      display: block;
+      font-size: 21px;
+    }
+
+    .profile-stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .list-item {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-2);
+    }
+
+    .list-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .status {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .chat {
+      display: grid;
+      gap: 10px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+    }
+
+    .message.me {
+      margin-left: auto;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .message small {
+      display: block;
+      margin-top: 5px;
+      opacity: 0.65;
+      font-size: 10px;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .chat-form .input {
+      flex: 1;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .color-choice {
+      min-height: 65px;
+      border: 2px solid transparent;
+      border-radius: 13px;
+      color: #fff;
+      font-weight: 900;
+      text-shadow: 0 1px 4px #000;
+    }
+
+    .color-choice:hover {
+      border-color: var(--text);
+    }
+
+    .notice {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 300;
+      display: none;
+      max-width: 350px;
+      padding: 14px 17px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    .rating-stars {
+      color: #ffc107;
+      letter-spacing: 2px;
+    }
+
+    .review {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface-2);
+    }
+
+    .review strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .review p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .wish-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface-2);
+    }
+
+    .wish-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .notification {
+      padding: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notification:last-child {
+      border-bottom: 0;
+    }
+
+    .notification.unread {
+      border-left: 3px solid var(--accent);
+      background: var(--surface-2);
+    }
+
+    .notification small {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .auth-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .auth-error {
+      display: none;
+      margin-bottom: 15px;
+      padding: 11px 13px;
+      border: 1px solid rgba(255, 85, 112, 0.5);
+      border-radius: 11px;
+      background: rgba(255, 85, 112, 0.1);
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .auth-error.show {
+      display: block;
+    }
+
+    .account-menu {
+      display: none;
+      position: absolute;
+      top: 62px;
+      right: 0;
+      width: 220px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      z-index: 70;
+    }
+
+    .account-menu.open {
+      display: block;
+    }
+
+    .account-menu button {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .account-menu button:hover {
+      background: var(--surface-2);
+    }
+
+    .account-wrapper {
+      position: relative;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+      .products {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        width: calc(100% - 20px);
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+        padding: 12px 0;
+        gap: 10px;
+      }
+
+      .nav {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .header-actions {
+        margin-left: auto;
+      }
+
+      .header-actions .primary {
+        display: none;
+      }
+
+      .auth-buttons .secondary {
+        display: none;
+      }
+
+      .user-chip {
+        max-width: 120px;
+      }
+
+      .hero-main {
+        min-height: 330px;
+        padding: 28px;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .products {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .visual {
+        height: 175px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        display: block;
+      }
+
+      .section-heading .secondary {
+        margin-top: 12px;
+      }
+
+      .profile-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 440px) {
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        height: 220px;
+      }
+
+      .profile-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .color-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chat-form {
+        flex-direction: column;
+      }
+
+      .auth-buttons .primary {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+
+    <a class="logo" href="#" onclick="goHome(event)">
+      TRADE<span>.</span>
+    </a>
+
+    <nav class="nav">
+      <button class="active" data-nav="home" onclick="goHome()">
+        Главная
+      </button>
+
+      <button data-nav="catalog" onclick="goCatalog()">
+        Объявления
+      </button>
+
+      <button data-nav="favorites" onclick="openFavorites()">
+        Избранное <span id="fav-count"></span>
+      </button>
+
+      <button data-nav="offers" onclick="openOffers()">
+        Обмены <span id="offer-count"></span>
+      </button>
+
+      <button data-nav="history" onclick="openHistory()">
+        История
+      </button>
+
+      <button data-nav="wishes" onclick="openWishes()">
+        Хочу найти
+      </button>
+
+      <button data-nav="profile" onclick="openProfile()">
+        Профиль
+      </button>
+    </nav>
+
+    <div class="header-actions">
+
+      <button class="icon-btn" onclick="openNotifications()" title="Уведомления">
+        🔔<span id="notification-count"></span>
+      </button>
+
+      <button class="icon-btn" onclick="openColorModal()" title="Изменить цвет">
+        🎨
+      </button>
+
+      <button class="icon-btn" onclick="toggleTheme()" title="Сменить тему">
+        ☼
+      </button>
+
+      <button class="primary" onclick="openAddModal()">
+        ＋ Добавить
+      </button>
+
+      <div id="guest-auth-buttons" class="auth-buttons">
+        <button class="secondary" onclick="openAuthModal('login')">
+          Войти
+        </button>
+
+        <button class="primary" onclick="openAuthModal('register')">
+          Регистрация
+        </button>
+      </div>
+
+      <div id="account-wrapper" class="account-wrapper hidden">
+        <button class="user-chip" onclick="toggleAccountMenu()">
+          <img id="header-avatar" class="user-chip-avatar" alt="Аватар">
+          <span id="header-user-name" class="user-chip-name"></span>
+        </button>
+
+        <div id="account-menu" class="account-menu">
+          <button onclick="openProfile();closeAccountMenu()">
+            👤 Мой профиль
+          </button>
+
+          <button onclick="openProfileEditFromMenu();closeAccountMenu()">
+            ✏️ Редактировать профиль
+          </button>
+
+          <button onclick="logout()">
+            🚪 Выйти
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="home">
+    <div class="hero">
+
+      <div class="hero-main">
+        <h1>Обменивай.<br>Не покупай.</h1>
+
+        <p>
+          TRADE помогает находить новым владельцам вещи,
+          которыми вы больше не пользуетесь. Публикуйте объявления,
+          сохраняйте интересное и договаривайтесь об обмене.
+        </p>
+
+        <button class="primary" onclick="goCatalog()">
+          Смотреть объявления →
+        </button>
+      </div>
+
+      <div class="stats-card">
+        <div class="stat">
+          <strong id="stat-products">0</strong>
+          <span>активных<br>объявлений</span>
+        </div>
+
+        <div class="stat">
+          <strong id="stat-users">12</strong>
+          <span>участников<br>демо-сервиса</span>
+        </div>
+
+        <div class="stat">
+          <strong id="stat-rating">4.9</strong>
+          <span>средний<br>рейтинг</span>
+        </div>
+      </div>
+
+    </div>
+
+    <section class="section">
+      <div class="section-heading">
+        <div>
+          <h2>Как это работает</h2>
+          <p class="sub">Всё необходимое — в одном месте.</p>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="emoji">📦</div>
+          <h3>Разместите вещь</h3>
+          <p>
+            Добавьте фото, описание, состояние и напишите,
+            что хотели бы получить взамен.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="emoji">🔎</div>
+          <h3>Найдите нужное</h3>
+          <p>
+            Ищите товары по названию, категории,
+            описанию, городу и статусу.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="emoji">🤝</div>
+          <h3>Договоритесь</h3>
+          <p>
+            Отправьте предложение, начните чат,
+            примите обмен и оставьте отзыв.
+          </p>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="section" id="catalog">
+    <div class="section-heading">
+      <div>
+        <h2>Объявления</h2>
+        <p class="sub">
+          Выберите вещь и предложите свой вариант обмена.
+        </p>
+      </div>
+
+      <button class="secondary" onclick="openAddModal()">
+        ＋ Разместить вещь
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <input
+        id="search"
+        class="input"
+        placeholder="Поиск по объявлениям..."
+        oninput="renderProducts()"
+      >
+
+      <select id="sort" class="select" onchange="renderProducts()">
+        <option value="new">Сначала новые</option>
+        <option value="old">Сначала старые</option>
+        <option value="title">По названию</option>
+      </select>
+
+      <select id="status-filter" class="select" onchange="renderProducts()">
+        <option value="all">Все статусы</option>
+        <option value="available">Доступно</option>
+        <option value="offers">Есть предложения</option>
+        <option value="completed">Обмен завершён</option>
+      </select>
+
+      <button class="secondary" onclick="resetFilters()">
+        Сбросить
+      </button>
+    </div>
+
+    <div class="categories" id="categories"></div>
+    <div class="products" id="products"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div>
+      <strong>TRADE.</strong> Обмен вещами между людьми.
+    </div>
+
+    <div>
+      Демо-прототип · Данные сохраняются в вашем браузере
+    </div>
+  </div>
+</footer>
+
+<!-- Авторизация -->
+<div class="modal-bg" id="auth-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('auth-modal')">×</button>
+
+    <h2 id="auth-title">Вход</h2>
+
+    <p class="sub" id="auth-subtitle">
+      Войдите, чтобы пользоваться всеми возможностями TRADE.
+    </p>
+
+    <div class="auth-tabs">
+      <button id="login-tab" class="auth-tab active" onclick="switchAuthMode('login')">
+        Вход
+      </button>
+
+      <button id="register-tab" class="auth-tab" onclick="switchAuthMode('register')">
+        Регистрация
+      </button>
+    </div>
+
+    <div id="auth-error" class="auth-error"></div>
+
+    <form onsubmit="submitAuth(event)">
+      <div id="register-name-group" class="form-group hidden">
+        <label>Имя пользователя</label>
+        <input
+          id="auth-name"
+          class="input"
+          placeholder="Например: Алексей"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          id="auth-email"
+          class="input"
+          type="email"
+          required
+          placeholder="you@example.com"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Пароль</label>
+        <input
+          id="auth-password"
+          class="input"
+          type="password"
+          required
+          minlength="4"
+          placeholder="Минимум 4 символа"
+        >
+      </div>
+
+      <div id="register-password-group" class="form-group hidden">
+        <label>Повторите пароль</label>
+        <input
+          id="auth-password-confirm"
+          class="input"
+          type="password"
+          minlength="4"
+          placeholder="Повторите пароль"
+        >
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary" onclick="closeModal('auth-modal')">
+          Отмена
+        </button>
+
+        <button id="auth-submit" class="primary" type="submit">
+          Войти
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Просмотр товара -->
+<div class="modal-bg" id="product-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('product-modal')">×</button>
+    <div id="product-detail"></div>
+  </div>
+</div>
+
+<!-- Добавление и редактирование товара -->
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('add-modal')">×</button>
+
+    <h2 id="add-modal-title">Новое объявление</h2>
+
+    <form onsubmit="saveProduct(event)">
+      <input type="hidden" id="edit-id">
+
+      <div class="form-group">
+        <label>Название</label>
+        <input
+          class="input"
+          id="add-title"
+          required
+          placeholder="Например: настольная лампа"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Категория</label>
+        <select class="select" id="add-category">
+          <option>Электроника</option>
+          <option>Дом</option>
+          <option>Одежда</option>
+          <option>Книги</option>
+          <option>Спорт</option>
+          <option>Хобби</option>
+          <option>Другое</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Состояние</label>
+        <select class="select" id="add-condition">
+          <option>Новое</option>
+          <option>Как новое</option>
+          <option>Хорошее</option>
+          <option>Есть следы использования</option>
+          <option>Требует ремонта</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Статус</label>
+        <select class="select" id="add-status">
+          <option value="available">Доступно</option>
+          <option value="offers">Есть предложения</option>
+          <option value="completed">Обмен завершён</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Описание</label>
+        <textarea
+          class="textarea"
+          id="add-description"
+          required
+          placeholder="Состояние, размер, особенности..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Что хотите получить взамен?</label>
+        <input
+          class="input"
+          id="add-wanted"
+          required
+          placeholder="Например: книги или предложите вариант"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Город или район</label>
+        <input
+          class="input"
+          id="add-location"
+          placeholder="Не указан"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Ссылка на фото</label>
+        <input
+          class="input"
+          id="add-image"
+          type="url"
+          placeholder="https://..."
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Или загрузите фото с устройства</label>
+        <input
+          class="input"
+          id="add-file"
+          type="file"
+          accept="image/*"
+          onchange="previewLocalImage(event)"
+        >
+      </div>
+
+      <div id="image-preview" class="hidden"></div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="secondary"
+          onclick="closeModal('add-modal')"
+        >
+          Отмена
+        </button>
+
+        <button class="primary" type="submit">
+          Сохранить объявление
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Профиль -->
+<div class="modal-bg" id="profile-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('profile-modal')">×</button>
+
+    <h2>Мой профиль</h2>
+
+    <div class="profile-head">
+      <img id="profile-avatar" class="avatar" alt="Аватар">
+
+      <div>
+        <h3 id="profile-name"></h3>
+        <p id="profile-city"></p>
+        <p id="profile-about"></p>
+        <div id="profile-rating-view"></div>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <strong id="my-products">0</strong>
+        <span>объявлений</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong id="my-rating">0</strong>
+        <span>рейтинг</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong id="my-reviews">0</strong>
+        <span>отзывов</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong id="my-completed">0</strong>
+        <span>обменов</span>
+      </div>
+    </div>
+
+    <div class="notice">
+      Профиль, объявления, отзывы и предложения сохраняются
+      только в этом браузере. Это демонстрационная версия
+      без общего сервера.
+    </div>
+
+    <div class="form-actions">
+      <button class="secondary" onclick="openProfileEdit()">
+        Редактировать
+      </button>
+
+      <button class="secondary" onclick="showMyProducts()">
+        Мои объявления
+      </button>
+
+      <button class="primary" onclick="openReviews()">
+        Мои отзывы
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Редактирование профиля -->
+<div class="modal-bg" id="profile-edit-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('profile-edit-modal')">×</button>
+
+    <h2>Редактировать профиль</h2>
+
+    <form onsubmit="saveProfile(event)">
+      <div class="form-group">
+        <label>Имя</label>
+        <input class="input" id="p-name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Город</label>
+        <input class="input" id="p-city" placeholder="Не указан">
+      </div>
+
+      <div class="form-group">
+        <label>О себе</label>
+        <textarea class="textarea" id="p-about"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Ссылка на аватар</label>
+        <input class="input" id="p-avatar" type="url" placeholder="https://...">
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="secondary"
+          onclick="closeModal('profile-edit-modal')"
+        >
+          Отмена
+        </button>
+
+        <button class="primary">
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Избранное -->
+<div class="modal-bg" id="favorites-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('favorites-modal')">×</button>
+    <h2>Избранное</h2>
+    <div class="products" id="favorites-products"></div>
+  </div>
+</div>
+
+<!-- Предложения -->
+<div class="modal-bg" id="offers-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('offers-modal')">×</button>
+    <h2>Мои предложения</h2>
+    <div class="list" id="offers-list"></div>
+  </div>
+</div>
+
+<!-- История -->
+<div class="modal-bg" id="history-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('history-modal')">×</button>
+    <h2>История обменов</h2>
+    <div class="list" id="history-list"></div>
+  </div>
+</div>
+
+<!-- Список желаний -->
+<div class="modal-bg" id="wishes-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('wishes-modal')">×</button>
+
+    <h2>Хочу найти</h2>
+
+    <form onsubmit="addWish(event)">
+      <div class="form-group">
+        <label>Что вы ищете?</label>
+        <input
+          class="input"
+          id="wish-input"
+          required
+          placeholder="Например: игровую приставку или велосипед"
+        >
+      </div>
+
+      <div class="form-actions">
+        <button class="primary">
+          Добавить желание
+        </button>
+      </div>
+    </form>
+
+    <div class="list" id="wishes-list"></div>
+  </div>
+</div>
+
+<!-- Уведомления -->
+<div class="modal-bg" id="notifications-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('notifications-modal')">×</button>
+    <h2>Уведомления</h2>
+    <div id="notifications-list"></div>
+
+    <div class="form-actions">
+      <button class="secondary" onclick="markNotificationsRead()">
+        Отметить всё прочитанным
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Чат -->
+<div class="modal-bg" id="chat-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('chat-modal')">×</button>
+
+    <h2 id="chat-title">Чат</h2>
+
+    <div class="chat" id="chat-list"></div>
+
+    <form class="chat-form" onsubmit="sendMessage(event)">
+      <input
+        class="input"
+        id="chat-input"
+        required
+        placeholder="Напишите сообщение..."
+      >
+
+      <button class="primary">
+        Отправить
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Профиль другого пользователя -->
+<div class="modal-bg" id="public-profile-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('public-profile-modal')">×</button>
+    <div id="public-profile-content"></div>
+  </div>
+</div>
+
+<!-- Отзывы -->
+<div class="modal-bg" id="reviews-modal">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('reviews-modal')">×</button>
+    <h2 id="reviews-title">Отзывы</h2>
+    <div class="list" id="reviews-list"></div>
+  </div>
+</div>
+
+<!-- Добавление отзыва -->
+<div class="modal-bg" id="review-add-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('review-add-modal')">×</button>
+
+    <h2>Оставить отзыв</h2>
+
+    <form onsubmit="saveReview(event)">
+      <input type="hidden" id="review-user">
+
+      <div class="form-group">
+        <label>Оценка</label>
+        <select class="select" id="review-rating">
+          <option value="5">★★★★★ — Отлично</option>
+          <option value="4">★★★★☆ — Хорошо</option>
+          <option value="3">★★★☆☆ — Нормально</option>
+          <option value="2">★★☆☆☆ — Плохо</option>
+          <option value="1">★☆☆☆☆ — Очень плохо</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Комментарий</label>
+        <textarea
+          class="textarea"
+          id="review-text"
+          required
+          placeholder="Расскажите, как прошёл обмен..."
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="primary">
+          Опубликовать отзыв
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Выбор цвета -->
+<div class="modal-bg" id="color-modal">
+  <div class="modal">
+    <button class="close" onclick="closeModal('color-modal')">×</button>
+
+    <h2>Цвет интерфейса</h2>
+
+    <p class="sub">
+      Выберите цвет кнопок, меток и акцентов сайта.
+    </p>
+
+    <div class="color-grid">
+      <button class="color-choice" style="background:#ff7a00"
+        onclick="applyAccent('#ff7a00')">
+        Оранжевый
+      </button>
+
+      <button class="color-choice" style="background:#2878ff"
+        onclick="applyAccent('#2878ff')">
+        Синий
+      </button>
+
+      <button class="color-choice" style="background:#18a957"
+        onclick="applyAccent('#18a957')">
+        Зелёный
+      </button>
+
+      <button class="color-choice" style="background:#8b5cf6"
+        onclick="applyAccent('#8b5cf6')">
+        Фиолетовый
+      </button>
+
+      <button class="color-choice" style="background:#ec4899"
+        onclick="applyAccent('#ec4899')">
+        Розовый
+      </button>
+
+      <button class="color-choice" style="background:#eab308"
+        onclick="applyAccent('#eab308')">
+        Жёлтый
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label>Свой цвет</label>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <input
+          id="custom-color"
+          type="color"
+          value="#ff7a00"
+          style="width:64px;height:46px"
+        >
+
+        <button
+          type="button"
+          class="primary"
+          onclick="applyCustomAccent()"
+        >
+          Применить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&auto=format&fit=crop";
+
+  const DEFAULT_AVATAR =
+    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop";
+
+  const seedProducts = [
+    {
+      id: 1,
+      title: "Беспроводные наушники",
+      category: "Электроника",
+      condition: "Хорошее",
+      status: "available",
+      description: "Рабочие Bluetooth-наушники. Хорошее состояние, кабель в комплекте.",
+      wanted: "Книги, лампа или другой вариант",
+      location: "Не указан",
+      user: "Алексей",
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop",
+      createdAt: 6
+    },
+    {
+      id: 2,
+      title: "Кофейный набор",
+      category: "Дом",
+      condition: "Как новое",
+      status: "offers",
+      description: "Набор чашек для кофе. Почти не использовался.",
+      wanted: "Растения или декор",
+      location: "Не указан",
+      user: "Марина",
+      image: "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=900&auto=format&fit=crop",
+      createdAt: 5
+    },
+    {
+      id: 3,
+      title: "Кроссовки для бега",
+      category: "Спорт",
+      condition: "Есть следы использования",
+      status: "available",
+      description: "Лёгкие кроссовки, размер 42. Есть следы использования.",
+      wanted: "Спортивная сумка или аксессуары",
+      location: "Не указан",
+      user: "Дмитрий",
+      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&auto=format&fit=crop",
+      createdAt: 4
+    },
+    {
+      id: 4,
+      title: "Городской рюкзак",
+      category: "Одежда",
+      condition: "Хорошее",
+      status: "available",
+      description: "Вместительный рюкзак для города и ноутбука.",
+      wanted: "Настольные игры или книги",
+      location: "Не указан",
+      user: "Ольга",
+      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&auto=format&fit=crop",
+      createdAt: 3
+    },
+    {
+      id: 5,
+      title: "Книги по дизайну",
+      category: "Книги",
+      condition: "Хорошее",
+      status: "completed",
+      description: "Несколько книг по графическому и веб-дизайну.",
+      wanted: "Книги по бизнесу или психологии",
+      location: "Не указан",
+      user: "Ирина",
+      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=900&auto=format&fit=crop",
+      createdAt: 2
+    },
+    {
+      id: 6,
+      title: "Настольная лампа",
+      category: "Дом",
+      condition: "Как новое",
+      status: "available",
+      description: "Минималистичная лампа для рабочего стола.",
+      wanted: "Комнатное растение или ваш вариант",
+      location: "Не указан",
+      user: "Сергей",
+      image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=900&auto=format&fit=crop",
+      createdAt: 1
+    }
+  ];
+
+  let authMode = "login";
+  let currentUser = loadData("trade_current_user", null);
+
+  let users = loadData("trade_users", []);
+
+  let products = loadData("trade_products", seedProducts);
+  let favorites = loadData("trade_favorites", []);
+  let offers = loadData("trade_offers", []);
+  let messages = loadData("trade_messages", []);
+  let history = loadData("trade_history", []);
+  let wishes = loadData("trade_wishes", []);
+  let notifications = loadData("trade_notifications", []);
+  let reviews = loadData("trade_reviews", []);
+
+  let profile = loadData("trade_profile", {
+    name: "Ваше имя",
+    city: "Город не указан",
+    about: "Пока ничего не рассказано о себе.",
+    avatar: DEFAULT_AVATAR
+  });
+
+  let selectedCategory = "Все";
+  let currentProductId = null;
+  let localImage = "";
+
+  function loadData(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function saveData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function showToast(text) {
+    const toast = document.getElementById("toast");
+    toast.textContent = text;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2600);
+  }
+
+  function openModal(id) {
+    const modal = document.getElementById(id);
+
+    if (modal) {
+      modal.classList.add("open");
+    }
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+
+    if (modal) {
+      modal.classList.remove("open");
+    }
+  }
+
+  document.querySelectorAll(".modal-bg").forEach(modal => {
+    modal.addEventListener("click", event => {
+      if (event.target === modal) {
+        modal.classList.remove("open");
+      }
+    });
+  });
+
+  function isLoggedIn() {
+    return Boolean(currentUser);
+  }
+
+  function requireAuth(actionText = "Эта функция") {
+    if (isLoggedIn()) {
+      return true;
+    }
+
+    showToast(`${actionText} доступна после входа`);
+    openAuthModal("login");
+    return false;
+  }
+
+  function getCurrentUserData() {
+    if (!currentUser) {
+      return null;
+    }
+
+    return users.find(user => user.email === currentUser.email) || null;
+  }
+
+  function saveCurrentUserData() {
+    if (!currentUser) {
+      return;
+    }
+
+    const index = users.findIndex(user => user.email === currentUser.email);
+
+    if (index >= 0) {
+      users[index] = {
+        ...users[index],
+        profile,
+        password: users[index].password
+      };
+
+      saveData("trade_users", users);
+    }
+  }
+
+  function loadUserWorkspace() {
+    if (!currentUser) {
+      return;
+    }
+
+    const user = getCurrentUserData();
+
+    if (!user) {
+      return;
+    }
+
+    profile = user.profile || {
+      name: user.name,
+      city: "Город не указан",
+      about: "Пока ничего не рассказано о себе.",
+      avatar: DEFAULT_AVATAR
+    };
+
+    const key = currentUser.email;
+
+    favorites = loadData(`trade_favorites_${key}`, []);
+    offers = loadData(`trade_offers_${key}`, []);
+    messages = loadData(`trade_messages_${key}`, []);
+    history = loadData(`trade_history_${key}`, []);
+    wishes = loadData(`trade_wishes_${key}`, []);
+    notifications = loadData(`trade_notifications_${key}`, []);
+    reviews = loadData(`trade_reviews_${key}`, []);
+  }
+
+  function saveUserWorkspace() {
+    if (!currentUser) {
+      return;
+    }
+
+    const key = currentUser.email;
+
+    saveData(`trade_favorites_${key}`, favorites);
+    saveData(`trade_offers_${key}`, offers);
+    saveData(`trade_messages_${key}`, messages);
+    saveData(`trade_history_${key}`, history);
+    saveData(`trade_wishes_${key}`, wishes);
+    saveData(`trade_notifications_${key}`, notifications);
+    saveData(`trade_reviews_${key}`, reviews);
+  }
+
+  function openAuthModal(mode = "login") {
+    authMode = mode;
+    switchAuthMode(mode);
+    clearAuthError();
+
+    document.getElementById("auth-email").value = "";
+    document.getElementById("auth-password").value = "";
+    document.getElementById("auth-name").value = "";
+    document.getElementById("auth-password-confirm").value = "";
+
+    openModal("auth-modal");
+  }
+
+  function switchAuthMode(mode) {
+    authMode = mode;
+
+    const isRegister = mode === "register";
+
+    document.getElementById("auth-title").textContent =
+      isRegister ? "Регистрация" : "Вход";
+
+    document.getElementById("auth-subtitle").textContent =
+      isRegister
+        ? "Создайте аккаунт, чтобы пользоваться TRADE."
+        : "Войдите, чтобы пользоваться всеми возможностями TRADE.";
+
+    document.getElementById("auth-submit").textContent =
+      isRegister ? "Создать аккаунт" : "Войти";
+
+    document.getElementById("register-name-group")
+      .classList.toggle("hidden", !isRegister);
+
+    document.getElementById("register-password-group")
+      .classList.toggle("hidden", !isRegister);
+
+    document.getElementById("login-tab")
+      .classList.toggle("active", !isRegister);
+
+    document.getElementById("register-tab")
+      .classList.toggle("active", isRegister);
+
+    clearAuthError();
+  }
+
+  function showAuthError(text) {
+    const error = document.getElementById("auth-error");
+    error.textContent = text;
+    error.classList.add("show");
+  }
+
+  function clearAuthError() {
+    const error = document.getElementById("auth-error");
+    error.textContent = "";
+    error.classList.remove("show");
+  }
+
+  function submitAuth(event) {
+    event.preventDefault();
+
+    const email = document
+      .getElementById("auth-email")
+      .value
+      .trim()
+      .toLowerCase();
+
+    const password = document
+      .getElementById("auth-password")
+      .value;
+
+    if (authMode === "register") {
+      const name = document
+        .getElementById("auth-name")
+        .value
+        .trim();
+
+      const passwordConfirm = document
+        .getElementById("auth-password-confirm")
+        .value;
+
+      if (!name) {
+        showAuthError("Введите имя пользователя.");
+        return;
+      }
+
+      if (password.length < 4) {
+        showAuthError("Пароль должен содержать минимум 4 символа.");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        showAuthError("Пароли не совпадают.");
+        return;
+      }
+
+      if (users.some(user => user.email === email)) {
+        showAuthError("Пользователь с таким email уже зарегистрирован.");
+        return;
+      }
+
+      const newUser = {
+        id: Date.now(),
+        email,
+        password,
+        name,
+        profile: {
+          name,
+          city: "Город не указан",
+          about: "Пока ничего не рассказано о себе.",
+          avatar: DEFAULT_AVATAR
+        }
+      };
+
+      users.push(newUser);
+      saveData("trade_users", users);
+
+      currentUser = {
+        email,
+        name
+      };
+
+      saveData("trade_current_user", currentUser);
+
+      profile = newUser.profile;
+      favorites = [];
+      offers = [];
+      messages = [];
+      history = [];
+      wishes = [];
+      notifications = [];
+      reviews = [];
+
+      saveUserWorkspace();
+
+      closeModal("auth-modal");
+      updateAuthUI();
+      updateProfileView();
+      renderProducts();
+
+      showToast("Регистрация прошла успешно");
+      return;
+    }
+
+    const user = users.find(item =>
+      item.email === email && item.password === password
+    );
+
+    if (!user) {
+      showAuthError("Неверный email или пароль.");
+      return;
+    }
+
+    currentUser = {
+      email: user.email,
+      name: user.name
+    };
+
+    saveData("trade_current_user", currentUser);
+
+    loadUserWorkspace();
+
+    closeModal("auth-modal");
+    updateAuthUI();
+    updateProfileView();
+    renderProducts();
+
+    showToast("Вы успешно вошли");
+  }
+
+  function logout() {
+    saveUserWorkspace();
+
+    currentUser = null;
+    localStorage.removeItem("trade_current_user");
+
+    closeAccountMenu();
+    closeModal("profile-modal");
+    closeModal("profile-edit-modal");
+
+    updateAuthUI();
+    updateProfileView();
+    renderProducts();
+
+    showToast("Вы вышли из аккаунта");
+  }
+
+  function updateAuthUI() {
+    const guestButtons = document.getElementById("guest-auth-buttons");
+    const accountWrapper = document.getElementById("account-wrapper");
+
+    if (currentUser) {
+      guestButtons.classList.add("hidden");
+      accountWrapper.classList.remove("hidden");
+
+      document.getElementById("header-avatar").src =
+        profile.avatar || DEFAULT_AVATAR;
+
+      document.getElementById("header-user-name").textContent =
+        profile.name || currentUser.name;
+    } else {
+      guestButtons.classList.remove("hidden");
+      accountWrapper.classList.add("hidden");
+    }
+  }
+
+  function toggleAccountMenu() {
+    document.getElementById("account-menu")
+      .classList.toggle("open");
+  }
+
+  function closeAccountMenu() {
+    document.getElementById("account-menu")
+      .classList.remove("open");
+  }
+
+  function openProfileEditFromMenu() {
+    if (!requireAuth("Редактирование профиля")) {
+      return;
+    }
+
+    openProfileEdit();
+  }
+
+  function setActiveNav(name) {
+    document.querySelectorAll("[data-nav]").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.nav === name
+      );
+    });
+  }
+
+  function goHome(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    setActiveNav("home");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  function goCatalog() {
+    setActiveNav("catalog");
+
+    document.getElementById("catalog").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function getCategories() {
+    return [
+      "Все",
+      ...new Set(products.map(product => product.category))
+    ];
+  }
+
+  function renderCategories() {
+    const box = document.getElementById("categories");
+    box.innerHTML = "";
+
+    getCategories().forEach(category => {
+      const button = document.createElement("button");
+
+      button.className =
+        "category" +
+        (category === selectedCategory ? " active" : "");
+
+      button.textContent = category;
+
+      button.onclick = () => {
+        selectedCategory = category;
+        renderCategories();
+        renderProducts();
+      };
+
+      box.appendChild(button);
+    });
+  }
+
+  function getStatusText(status) {
+    if (status === "offers") return "Есть предложения";
+    if (status === "completed") return "Обмен завершён";
+    return "Доступно";
+  }
+
+  function getFilteredProducts() {
+    const query = document
+      .getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+    const sort = document.getElementById("sort").value;
+    const statusFilter = document.getElementById("status-filter").value;
+
+    let result = products.filter(product => {
+      const searchableText = [
+        product.title,
+        product.category,
+        product.description,
+        product.wanted,
+        product.location,
+        product.user,
+        product.condition
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const matchesSearch = searchableText.includes(query);
+
+      const matchesCategory =
+        selectedCategory === "Все" ||
+        product.category === selectedCategory;
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        product.status === statusFilter;
+
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    if (sort === "new") {
+      result.sort((a, b) => b.createdAt - a.createdAt);
+    }
+
+    if (sort === "old") {
+      result.sort((a, b) => a.createdAt - b.createdAt);
+    }
+
+    if (sort === "title") {
+      result.sort((a, b) =>
+        a.title.localeCompare(b.title, "ru")
+      );
+    }
+
+    return result;
+  }
+
+  function createProductCard(product) {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const isFavorite = favorites.includes(product.id);
+    const isMine = isLoggedIn() && product.user === profile.name;
+
+    card.innerHTML = `
+      <div class="visual">
+        <img
+          src="${escapeHtml(product.image || FALLBACK_IMAGE)}"
+          alt="${escapeHtml(product.title)}"
+          onerror="this.src='${FALLBACK_IMAGE}'"
+        >
+
+        <span class="tag">${escapeHtml(product.category)}</span>
+
+        <span class="status-badge">
+          ${escapeHtml(getStatusText(product.status))}
+        </span>
+
+        <button
+          class="heart ${isFavorite ? "active" : ""}"
+          onclick="toggleFavorite(${product.id}, event)"
+        >
+          ${isFavorite ? "♥" : "♡"}
+        </button>
+      </div>
+
+      <div class="card-body">
+        <h3>${escapeHtml(product.title)}</h3>
+
+        <p class="desc">
+          ${escapeHtml(product.description)}
+        </p>
+
+        <div class="meta">
+          <span>📍 ${escapeHtml(product.location || "Не указан")}</span>
+          <span>👤
+            <a href="#" onclick="openPublicProfile(event, '${escapeHtml(product.user)}')">
+              ${escapeHtml(product.user)}
+            </a>
+          </span>
+        </div>
+
+        <div class="meta">
+          <span>Состояние:</span>
+          <strong>${escapeHtml(product.condition || "Не указано")}</strong>
+        </div>
+
+        <div class="actions">
+          <button
+            class="secondary"
+            onclick="openProduct(${product.id})"
+          >
+            Подробнее
+          </button>
+
+          ${
+            product.status !== "completed" && !isMine
+              ? `
+                <button
+                  class="primary"
+                  onclick="openOffer(${product.id})"
+                >
+                  Обмен
+                </button>
+              `
+              : ""
+          }
+        </div>
+
+        ${
+          isMine
+            ? `
+              <div class="actions" style="margin-top:8px">
+                <button
+                  class="small-btn"
+                  onclick="editProduct(${product.id})"
+                >
+                  Изменить
+                </button>
+
+                <button
+                  class="small-btn"
+                  onclick="deleteProduct(${product.id})"
+                >
+                  Удалить
+                </button>
+              </div>
+            `
+            : ""
+        }
+      </div>
+    `;
+
+    return card;
+  }
+
+  function renderProducts() {
+    const box = document.getElementById("products");
+    const result = getFilteredProducts();
+
+    box.innerHTML = "";
+
+    if (!result.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Ничего не найдено</h3>
+          <p>Измените поисковый запрос или фильтры.</p>
+        </div>
+      `;
+    } else {
+      result.forEach(product => {
+        box.appendChild(createProductCard(product));
+      });
+    }
+
+    updateCounters();
+  }
+
+  function getUserReviews(userName) {
+    return reviews.filter(review => review.to === userName);
+  }
+
+  function getUserRating(userName) {
+    const userReviews = getUserReviews(userName);
+
+    if (!userReviews.length) {
+      return "—";
+    }
+
+    const sum = userReviews.reduce((total, review) => {
+      return total + Number(review.rating);
+    }, 0);
+
+    return (sum / userReviews.length).toFixed(1);
+  }
+
+  function updateCounters() {
+    document.getElementById("stat-products").textContent =
+      products.filter(product => product.status !== "completed").length;
+
+    document.getElementById("fav-count").textContent =
+      favorites.length ? `(${favorites.length})` : "";
+
+    document.getElementById("offer-count").textContent =
+      offers.length ? `(${offers.length})` : "";
+
+    const unread = notifications.filter(item => !item.read).length;
+
+    document.getElementById("notification-count").textContent =
+      unread ? `(${unread})` : "";
+
+    document.getElementById("my-products").textContent =
+      isLoggedIn()
+        ? products.filter(product => product.user === profile.name).length
+        : "0";
+
+    document.getElementById("my-rating").textContent =
+      isLoggedIn() ? getUserRating(profile.name) : "—";
+
+    document.getElementById("my-reviews").textContent =
+      isLoggedIn() ? getUserReviews(profile.name).length : "0";
+
+    document.getElementById("my-completed").textContent =
+      isLoggedIn()
+        ? history.filter(item =>
+            item.from === profile.name || item.to === profile.name
+          ).length
+        : "0";
+  }
+
+  function resetFilters() {
+    document.getElementById("search").value = "";
+    document.getElementById("sort").value = "new";
+    document.getElementById("status-filter").value = "all";
+
+    selectedCategory = "Все";
+
+    renderCategories();
+    renderProducts();
+  }
+
+  function toggleFavorite(id, event) {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (!requireAuth("Избранное")) {
+      return;
+    }
+
+    if (favorites.includes(id)) {
+      favorites = favorites.filter(item => item !== id);
+      showToast("Удалено из избранного");
+    } else {
+      favorites.push(id);
+      showToast("Добавлено в избранное");
+    }
+
+    saveUserWorkspace();
+
+    renderProducts();
+    updateCounters();
+  }
+
+  function openProduct(id) {
+    const product = products.find(item => item.id === id);
+
+    if (!product) {
+      return;
+    }
+
+    currentProductId = id;
+
+    const isFavorite = favorites.includes(id);
+    const isMine = isLoggedIn() && product.user === profile.name;
+
+    document.getElementById("product-detail").innerHTML = `
+      <img
+        class="detail-img"
+        src="${escapeHtml(product.image || FALLBACK_IMAGE)}"
+        alt="${escapeHtml(product.title)}"
+        onerror="this.src='${FALLBACK_IMAGE}'"
+      >
+
+      <h2>${escapeHtml(product.title)}</h2>
+
+      <div class="detail-row">
+        <span>Категория</span>
+        <strong>${escapeHtml(product.category)}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Состояние</span>
+        <strong>${escapeHtml(product.condition || "Не указано")}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Статус</span>
+        <strong>${escapeHtml(getStatusText(product.status))}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Владелец</span>
+        <strong>
+          <a href="#" onclick="openPublicProfile(event, '${escapeHtml(product.user)}')">
+            ${escapeHtml(product.user)}
+          </a>
+        </strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Место</span>
+        <strong>${escapeHtml(product.location || "Не указан")}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Желаемый обмен</span>
+        <strong>${escapeHtml(product.wanted)}</strong>
+      </div>
+
+      <p style="color:var(--muted);line-height:1.6">
+        ${escapeHtml(product.description)}
+      </p>
+
+      <div class="form-actions">
+        <button
+          class="secondary"
+          onclick="toggleFavorite(${product.id}, event);openProduct(${product.id})"
+        >
+          ${isFavorite ? "♥ В избранном" : "♡ В избранное"}
+        </button>
+
+        ${
+          isMine
+            ? `
+              <button
+                class="secondary"
+                onclick="editProduct(${product.id})"
+              >
+                Редактировать
+              </button>
+            `
+            : `
+              <button
+                class="secondary"
+                onclick="openChat(${product.id})"
+              >
+                Написать
+              </button>
+
+              ${
+                product.status !== "completed"
+                  ? `
+                    <button
+                      class="primary"
+                      onclick="openOffer(${product.id})"
+                    >
+                      Предложить обмен
+                    </button>
+                  `
+                  : ""
+              }
+            `
+        }
+      </div>
+    `;
+
+    openModal("product-modal");
+  }
+
+  function clearProductForm() {
+    document.getElementById("edit-id").value = "";
+    document.getElementById("add-modal-title").textContent =
+      "Новое объявление";
+
+    document.getElementById("add-title").value = "";
+    document.getElementById("add-category").value = "Электроника";
+    document.getElementById("add-condition").value = "Новое";
+    document.getElementById("add-status").value = "available";
+    document.getElementById("add-description").value = "";
+    document.getElementById("add-wanted").value = "";
+    document.getElementById("add-location").value = "";
+    document.getElementById("add-image").value = "";
+    document.getElementById("add-file").value = "";
+
+    document.getElementById("image-preview").innerHTML = "";
+    document.getElementById("image-preview").classList.add("hidden");
+
+    localImage = "";
+  }
+
+  function openAddModal() {
+    if (!requireAuth("Добавление объявлений")) {
+      return;
+    }
+
+    clearProductForm();
+    openModal("add-modal");
+  }
+
+  function previewLocalImage(event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      localImage = reader.result;
+
+      const preview = document.getElementById("image-preview");
+
+      preview.classList.remove("hidden");
+
+      preview.innerHTML = `
+        <img
+          src="${localImage}"
+          alt="Предпросмотр"
+          style="width:100%;max-height:180px;object-fit:cover;border-radius:12px"
+        >
+      `;
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function saveProduct(event) {
+    event.preventDefault();
+
+    if (!requireAuth("Сохранение объявления")) {
+      return;
+    }
+
+    const id = Number(
+      document.getElementById("edit-id").value
+    );
+
+    const data = {
+      title: document.getElementById("add-title").value.trim(),
+      category: document.getElementById("add-category").value,
+      condition: document.getElementById("add-condition").value,
+      status: document.getElementById("add-status").value,
+      description: document.getElementById("add-description").value.trim(),
+      wanted: document.getElementById("add-wanted").value.trim(),
+      location:
+        document.getElementById("add-location").value.trim() ||
+        "Не указан",
+      image:
+        localImage ||
+        document.getElementById("add-image").value.trim() ||
+        FALLBACK_IMAGE,
+      user: profile.name,
+      createdAt: Date.now()
+    };
+
+    if (id) {
+      const index = products.findIndex(product =>
+        product.id === id
+      );
+
+      if (index >= 0) {
+        products[index] = {
+          ...products[index],
+          ...data
+        };
+      }
+
+      showToast("Объявление изменено");
+    } else {
+      products.unshift({
+        id: Date.now(),
+        ...data
+      });
+
+      addNotification(
+        "Новое объявление опубликовано",
+        `Вы добавили товар «${data.title}».`
+      );
+
+      showToast("Объявление опубликовано");
+    }
+
+    saveData("trade_products", products);
+
+    closeModal("add-modal");
+    renderCategories();
+    renderProducts();
+  }
+
+  function editProduct(id) {
+    if (!requireAuth("Редактирование объявлений")) {
+      return;
+    }
+
+    const product = products.find(item => item.id === id);
+
+    if (!product) {
+      return;
+    }
+
+    if (product.user !== profile.name) {
+      showToast("Можно изменять только свои объявления");
+      return;
+    }
+
+    closeModal("product-modal");
+
+    document.getElementById("edit-id").value = product.id;
+    document.getElementById("add-modal-title").textContent =
+      "Редактировать объявление";
+
+    document.getElementById("add-title").value = product.title;
+    document.getElementById("add-category").value = product.category;
+    document.getElementById("add-condition").value =
+      product.condition || "Новое";
+    document.getElementById("add-status").value =
+      product.status || "available";
+    document.getElementById("add-description").value = product.description;
+    document.getElementById("add-wanted").value = product.wanted;
+    document.getElementById("add-location").value = product.location;
+
+    if (product.image && product.image.startsWith("data:")) {
+      localImage = product.image;
+      document.getElementById("add-image").value = "";
+    } else {
+      localImage = "";
+      document.getElementById("add-image").value = product.image;
+    }
+
+    openModal("add-modal");
+  }
+
+  function deleteProduct(id) {
+    if (!requireAuth("Удаление объявлений")) {
+      return;
+    }
+
+    const product = products.find(item => item.id === id);
+
+    if (!product || product.user !== profile.name) {
+      return;
+    }
+
+    if (!confirm("Удалить это объявление?")) {
+      return;
+    }
+
+    products = products.filter(item => item.id !== id);
+    favorites = favorites.filter(item => item !== id);
+
+    saveData("trade_products", products);
+    saveUserWorkspace();
+
+    renderCategories();
+    renderProducts();
+
+    showToast("Объявление удалено");
+  }
+
+  function openFavorites() {
+    if (!requireAuth("Избранное")) {
+      return;
+    }
+
+    setActiveNav("favorites");
+
+    const box = document.getElementById("favorites-products");
+    box.innerHTML = "";
+
+    const favoriteProducts = products.filter(product =>
+      favorites.includes(product.id)
+    );
+
+    if (!favoriteProducts.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Избранное пустое</h3>
+          <p>Нажимайте на сердечко на карточках товаров.</p>
+        </div>
+      `;
+    } else {
+      favoriteProducts.forEach(product => {
+        box.appendChild(createProductCard(product));
+      });
+    }
+
+    openModal("favorites-modal");
+  }
+
+  function addNotification(title, text) {
+    notifications.unshift({
+      id: Date.now(),
+      title,
+      text,
+      date: new Date().toLocaleString("ru-RU"),
+      read: false
+    });
+
+    saveUserWorkspace();
+    updateCounters();
+  }
+
+  function openOffer(id) {
+    if (!requireAuth("Обмен")) {
+      return;
+    }
+
+    const product = products.find(item => item.id === id);
+
+    if (!product) {
+      return;
+    }
+
+    if (product.user === profile.name) {
+      showToast("Нельзя предложить обмен самому себе");
+      return;
+    }
+
+    if (product.status === "completed") {
+      showToast("Этот обмен уже завершён");
+      return;
+    }
+
+    const text = prompt(
+      `Что вы предлагаете взамен «${product.title}»?`
+    );
+
+    if (!text || !text.trim()) {
+      return;
+    }
+
+    offers.unshift({
+      id: Date.now(),
+      productId: id,
+      productTitle: product.title,
+      productOwner: product.user,
+      text: text.trim(),
+      from: profile.name,
+      status: "На рассмотрении",
+      date: new Date().toLocaleString("ru-RU")
+    });
+
+    product.status = "offers";
+
+    saveUserWorkspace();
+    saveData("trade_products", products);
+
+    addNotification(
+      "Предложение отправлено",
+      `Ваше предложение по товару «${product.title}» сохранено.`
+    );
+
+    updateCounters();
+    closeModal("product-modal");
+    renderProducts();
+
+    showToast("Предложение отправлено");
+  }
+
+  function openOffers() {
+    if (!requireAuth("Предложения")) {
+      return;
+    }
+
+    setActiveNav("offers");
+
+    const box = document.getElementById("offers-list");
+    box.innerHTML = "";
+
+    if (!offers.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Предложений пока нет</h3>
+          <p>Отправьте предложение из карточки товара.</p>
+        </div>
+      `;
+    } else {
+      offers.forEach(offer => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+
+        const isMine = offer.from === profile.name;
+
+        item.innerHTML = `
+          <div class="list-top">
+            <strong>${escapeHtml(offer.productTitle)}</strong>
+            <span class="status">${escapeHtml(offer.status)}</span>
+          </div>
+
+          <div style="color:var(--muted);font-size:13px">
+            ${isMine ? "Вы предложили" : "Предложение"}:
+            ${escapeHtml(offer.text)}
+          </div>
+
+          <div style="color:var(--muted);font-size:12px;margin-top:7px">
+            Отправитель: ${escapeHtml(offer.from)}
+          </div>
+
+          <div style="color:var(--muted);font-size:11px;margin-top:7px">
+            ${escapeHtml(offer.date)}
+          </div>
+
+          <div class="actions" style="margin-top:12px">
+            ${
+              offer.status === "На рассмотрении" && !isMine
+                ? `
+                  <button
+                    class="success-btn"
+                    onclick="acceptOffer(${offer.id})"
+                  >
+                    Принять
+                  </button>
+
+                  <button
+                    class="danger"
+                    onclick="rejectOffer(${offer.id})"
+                  >
+                    Отклонить
+                  </button>
+                `
+                : ""
+            }
+
+            ${
+              offer.status === "На рассмотрении" && isMine
+                ? `
+                  <button
+                    class="secondary"
+                    onclick="cancelOffer(${offer.id})"
+                  >
+                    Отменить
+                  </button>
+                `
+                : ""
+            }
+
+            ${
+              offer.status === "Принят"
+                ? `
+                  <button
+                    class="primary"
+                    onclick="completeOffer(${offer.id})"
+                  >
+                    Завершить обмен
+                  </button>
+                `
+                : ""
+            }
+          </div>
+        `;
+
+        box.appendChild(item);
+      });
+    }
+
+    openModal("offers-modal");
+  }
+
+  function acceptOffer(id) {
+    if (!requireAuth("Принятие предложения")) {
+      return;
+    }
+
+    const offer = offers.find(item => item.id === id);
+
+    if (!offer) {
+      return;
+    }
+
+    offer.status = "Принят";
+
+    saveUserWorkspace();
+
+    addNotification(
+      "Предложение принято",
+      `Предложение по товару «${offer.productTitle}» принято.`
+    );
+
+    openOffers();
+    showToast("Предложение принято");
+  }
+
+  function rejectOffer(id) {
+    if (!requireAuth("Отклонение предложения")) {
+      return;
+    }
+
+    const offer = offers.find(item => item.id === id);
+
+    if (!offer) {
+      return;
+    }
+
+    offer.status = "Отклонён";
+
+    saveUserWorkspace();
+
+    addNotification(
+      "Предложение отклонено",
+      `Предложение по товару «${offer.productTitle}» отклонено.`
+    );
+
+    openOffers();
+    showToast("Предложение отклонено");
+  }
+
+  function cancelOffer(id) {
+    if (!requireAuth("Отмена предложения")) {
+      return;
+    }
+
+    const offer = offers.find(item => item.id === id);
+
+    if (!offer) {
+      return;
+    }
+
+    offer.status = "Отменён";
+
+    saveUserWorkspace();
+
+    openOffers();
+    showToast("Предложение отменено");
+  }
+
+  function completeOffer(id) {
+    if (!requireAuth("Завершение обмена")) {
+      return;
+    }
+
+    const offer = offers.find(item => item.id === id);
+
+    if (!offer) {
+      return;
+    }
+
+    const product = products.find(item => item.id === offer.productId);
+
+    if (product) {
+      product.status = "completed";
+    }
+
+    offer.status = "Завершён";
+
+    history.unshift({
+      id: Date.now(),
+      productTitle: offer.productTitle,
+      from: offer.from,
+      to: product ? product.user : "Не указан",
+      date: new Date().toLocaleString("ru-RU")
+    });
+
+    saveUserWorkspace();
+    saveData("trade_products", products);
+
+    addNotification(
+      "Обмен завершён",
+      `Обмен по товару «${offer.productTitle}» завершён.`
+    );
+
+    openOffers();
+    renderProducts();
+
+    showToast("Обмен завершён");
+  }
+
+  function openHistory() {
+    if (!requireAuth("История")) {
+      return;
+    }
+
+    setActiveNav("history");
+
+    const box = document.getElementById("history-list");
+    box.innerHTML = "";
+
+    const myHistory = history.filter(item =>
+      item.from === profile.name || item.to === profile.name
+    );
+
+    if (!myHistory.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>История пока пустая</h3>
+          <p>Здесь появятся завершённые обмены.</p>
+        </div>
+      `;
+    } else {
+      myHistory.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "list-item";
+
+        row.innerHTML = `
+          <div class="list-top">
+            <strong>${escapeHtml(item.productTitle)}</strong>
+            <span class="status">Завершён</span>
+          </div>
+
+          <div style="color:var(--muted);font-size:13px">
+            Участники: ${escapeHtml(item.from)}
+            и ${escapeHtml(item.to)}
+          </div>
+
+          <div style="color:var(--muted);font-size:11px;margin-top:7px">
+            ${escapeHtml(item.date)}
+          </div>
+
+          ${
+            item.to !== profile.name
+              ? `
+                <div class="form-actions">
+                  <button
+                    class="primary"
+                    onclick="openReviewForm('${escapeHtml(item.to)}')"
+                  >
+                    Оставить отзыв
+                  </button>
+                </div>
+              `
+              : ""
+          }
+        `;
+
+        box.appendChild(row);
+      });
+    }
+
+    openModal("history-modal");
+  }
+
+  function openWishes() {
+    if (!requireAuth("Список желаний")) {
+      return;
+    }
+
+    setActiveNav("wishes");
+    renderWishes();
+    openModal("wishes-modal");
+  }
+
+  function addWish(event) {
+    event.preventDefault();
+
+    if (!requireAuth("Добавление желания")) {
+      return;
+    }
+
+    const input = document.getElementById("wish-input");
+    const text = input.value.trim();
+
+    if (!text) {
+      return;
+    }
+
+    wishes.unshift({
+      id: Date.now(),
+      text,
+      date: new Date().toLocaleDateString("ru-RU")
+    });
+
+    saveUserWorkspace();
+
+    input.value = "";
+
+    renderWishes();
+    showToast("Желание добавлено");
+  }
+
+  function renderWishes() {
+    const box = document.getElementById("wishes-list");
+    box.innerHTML = "";
+
+    if (!wishes.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Список желаний пуст</h3>
+          <p>Добавьте вещь, которую хотите найти.</p>
+        </div>
+      `;
+
+      return;
+    }
+
+    wishes.forEach(wish => {
+      const item = document.createElement("div");
+      item.className = "wish-item";
+
+      item.innerHTML = `
+        <div>
+          <strong>${escapeHtml(wish.text)}</strong>
+          <span>Добавлено ${escapeHtml(wish.date)}</span>
+        </div>
+
+        <button
+          class="small-btn"
+          onclick="deleteWish(${wish.id})"
+        >
+          Удалить
+        </button>
+      `;
+
+      box.appendChild(item);
+    });
+  }
+
+  function deleteWish(id) {
+    if (!requireAuth("Удаление желания")) {
+      return;
+    }
+
+    wishes = wishes.filter(wish => wish.id !== id);
+    saveUserWorkspace();
+    renderWishes();
+    showToast("Желание удалено");
+  }
+
+  function openNotifications() {
+    if (!requireAuth("Уведомления")) {
+      return;
+    }
+
+    const box = document.getElementById("notifications-list");
+    box.innerHTML = "";
+
+    if (!notifications.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Уведомлений нет</h3>
+        </div>
+      `;
+    } else {
+      notifications.forEach(notification => {
+        const item = document.createElement("div");
+
+        item.className =
+          "notification" +
+          (!notification.read ? " unread" : "");
+
+        item.innerHTML = `
+          <strong>${escapeHtml(notification.title)}</strong>
+          <div>${escapeHtml(notification.text)}</div>
+          <small>${escapeHtml(notification.date)}</small>
+        `;
+
+        box.appendChild(item);
+      });
+    }
+
+    openModal("notifications-modal");
+  }
+
+  function markNotificationsRead() {
+    if (!requireAuth("Уведомления")) {
+      return;
+    }
+
+    notifications = notifications.map(item => ({
+      ...item,
+      read: true
+    }));
+
+    saveUserWorkspace();
+    updateCounters();
+    openNotifications();
+  }
+
+  function openProfile() {
+    if (!requireAuth("Профиль")) {
+      return;
+    }
+
+    setActiveNav("profile");
+    updateProfileView();
+    openModal("profile-modal");
+  }
+
+  function updateProfileView() {
+    document.getElementById("profile-avatar").src =
+      profile.avatar || DEFAULT_AVATAR;
+
+    document.getElementById("profile-name").textContent =
+      profile.name || "Гость";
+
+    document.getElementById("profile-city").textContent =
+      profile.city || "Город не указан";
+
+    document.getElementById("profile-about").textContent =
+      profile.about || "Пока ничего не рассказано о себе.";
+
+    document.getElementById("profile-rating-view").innerHTML = `
+      <span class="rating-stars">★★★★★</span>
+      <strong>${isLoggedIn() ? getUserRating(profile.name) : "—"}</strong>
+      <span style="color:var(--muted);font-size:12px">
+        (${isLoggedIn() ? getUserReviews(profile.name).length : 0} отзывов)
+      </span>
+    `;
+
+    updateCounters();
+    updateAuthUI();
+  }
+
+  function openProfileEdit() {
+    if (!requireAuth("Редактирование профиля")) {
+      return;
+    }
+
+    document.getElementById("p-name").value =
+      profile.name || "";
+
+    document.getElementById("p-city").value =
+      profile.city || "";
+
+    document.getElementById("p-about").value =
+      profile.about || "";
+
+    document.getElementById("p-avatar").value =
+      profile.avatar || "";
+
+    closeModal("profile-modal");
+    openModal("profile-edit-modal");
+  }
+
+  function saveProfile(event) {
+    event.preventDefault();
+
+    if (!requireAuth("Сохранение профиля")) {
+      return;
+    }
+
+    const oldName = profile.name;
+
+    profile = {
+      name: document.getElementById("p-name").value.trim(),
+      city: document.getElementById("p-city").value.trim(),
+      about: document.getElementById("p-about").value.trim(),
+      avatar:
+        document.getElementById("p-avatar").value.trim() ||
+        DEFAULT_AVATAR
+    };
+
+    products = products.map(product => {
+      if (product.user === oldName) {
+        return {
+          ...product,
+          user: profile.name
+        };
+      }
+
+      return product;
+    });
+
+    offers = offers.map(offer => {
+      if (offer.from === oldName) {
+        offer.from = profile.name;
+      }
+
+      return offer;
+    });
+
+    if (currentUser) {
+      currentUser.name = profile.name;
+      saveData("trade_current_user", currentUser);
+    }
+
+    saveData("trade_profile", profile);
+    saveData("trade_products", products);
+    saveUserWorkspace();
+    saveCurrentUserData();
+
+    closeModal("profile-edit-modal");
+    updateProfileView();
+    renderCategories();
+    renderProducts();
+
+    showToast("Профиль сохранён");
+  }
+
+  function showMyProducts() {
+    if (!requireAuth("Мои объявления")) {
+      return;
+    }
+
+    closeModal("profile-modal");
+
+    document.getElementById("search").value =
+      profile.name;
+
+    selectedCategory = "Все";
+
+    renderCategories();
+    renderProducts();
+    goCatalog();
+  }
+
+  function openChat(id) {
+    if (!requireAuth("Чат")) {
+      return;
+    }
+
+    const product = products.find(item => item.id === id);
+
+    if (!product) {
+      return;
+    }
+
+    currentProductId = id;
+
+    document.getElementById("chat-title").textContent =
+      "Чат: " + product.title;
+
+    renderChat();
+
+    closeModal("product-modal");
+    openModal("chat-modal");
+  }
+
+  function renderChat() {
+    const box = document.getElementById("chat-list");
+    box.innerHTML = "";
+
+    const productMessages = messages.filter(message =>
+      message.productId === currentProductId
+    );
+
+    if (!productMessages.length) {
+      box.innerHTML = `
+        <div class="empty" style="padding:25px">
+          Начните диалог по этому объявлению.
+        </div>
+      `;
+
+      return;
+    }
+
+    productMessages.forEach(message => {
+      const item = document.createElement("div");
+
+      item.className =
+        "message" +
+        (message.author === profile.name ? " me" : "");
+
+      item.innerHTML = `
+        ${escapeHtml(message.text)}
+        <small>
+          ${escapeHtml(message.author)} · ${escapeHtml(message.time)}
+        </small>
+      `;
+
+      box.appendChild(item);
+    });
+  }
+
+  function sendMessage(event) {
+    event.preventDefault();
+
+    if (!requireAuth("Чат")) {
+      return;
+    }
+
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+
+    if (!text || !currentProductId) {
+      return;
+    }
+
+    messages.push({
+      id: Date.now(),
+      productId: currentProductId,
+      author: profile.name,
+      text,
+      time: new Date().toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    });
+
+    saveUserWorkspace();
+
+    input.value = "";
+
+    renderChat();
+    showToast("Сообщение отправлено");
+  }
+
+  function openPublicProfile(event, userName) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const userProducts = products.filter(product =>
+      product.user === userName
+    );
+
+    const userReviews = getUserReviews(userName);
+
+    document.getElementById("public-profile-content").innerHTML = `
+      <div class="profile-head">
+        <img
+          class="avatar"
+          src="${DEFAULT_AVATAR}"
+          alt="Аватар пользователя"
+        >
+
+        <div>
+          <h3>${escapeHtml(userName)}</h3>
+          <p>Публичный профиль участника TRADE</p>
+          <div>
+            <span class="rating-stars">★★★★★</span>
+            <strong>${getUserRating(userName)}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <strong>${userProducts.length}</strong>
+          <span>объявлений</span>
+        </div>
+
+        <div class="profile-stat">
+          <strong>${userReviews.length}</strong>
+          <span>отзывов</span>
+        </div>
+
+        <div class="profile-stat">
+          <strong>${getUserRating(userName)}</strong>
+          <span>рейтинг</span>
+        </div>
+
+        <div class="profile-stat">
+          <strong>TRADE</strong>
+          <span>участник</span>
+        </div>
+      </div>
+
+      <h3>Объявления пользователя</h3>
+
+      <div class="products" id="public-user-products"></div>
+
+      <h3 style="margin-top:25px">Отзывы</h3>
+
+      <div class="list">
+        ${
+          userReviews.length
+            ? userReviews.map(review => `
+                <div class="review">
+                  <strong>
+                    ${escapeHtml(review.from)}
+                    <span class="rating-stars">
+                      ${"★".repeat(Number(review.rating))}
+                    </span>
+                  </strong>
+                  <p>${escapeHtml(review.text)}</p>
+                </div>
+              `).join("")
+            : `
+              <div class="empty">
+                Отзывов пока нет.
+              </div>
+            `
+        }
+      </div>
+    `;
+
+    const productBox =
+      document.getElementById("public-user-products");
+
+    if (!userProducts.length) {
+      productBox.innerHTML = `
+        <div class="empty">
+          У пользователя пока нет объявлений.
+        </div>
+      `;
+    } else {
+      userProducts.forEach(product => {
+        productBox.appendChild(createProductCard(product));
+      });
+    }
+
+    openModal("public-profile-modal");
+  }
+
+  function openReviews() {
+    if (!requireAuth("Отзывы")) {
+      return;
+    }
+
+    closeModal("profile-modal");
+
+    document.getElementById("reviews-title").textContent =
+      "Мои отзывы";
+
+    renderReviews(profile.name);
+    openModal("reviews-modal");
+  }
+
+  function renderReviews(userName) {
+    const box = document.getElementById("reviews-list");
+    box.innerHTML = "";
+
+    const userReviews = getUserReviews(userName);
+
+    if (!userReviews.length) {
+      box.innerHTML = `
+        <div class="empty">
+          <h3>Отзывов пока нет</h3>
+        </div>
+      `;
+
+      return;
+    }
+
+    userReviews.forEach(review => {
+      const item = document.createElement("div");
+      item.className = "review";
+
+      item.innerHTML = `
+        <strong>
+          ${escapeHtml(review.from)}
+          <span class="rating-stars">
+            ${"★".repeat(Number(review.rating))}
+          </span>
+        </strong>
+
+        <p>${escapeHtml(review.text)}</p>
+
+        <small style="color:var(--muted)">
+          ${escapeHtml(review.date)}
+        </small>
+      `;
+
+      box.appendChild(item);
+    });
+  }
+
+  function openReviewForm(userName) {
+    if (!requireAuth("Добавление отзыва")) {
+      return;
+    }
+
+    document.getElementById("review-user").value = userName;
+    document.getElementById("review-rating").value = "5";
+    document.getElementById("review-text").value = "";
+
+    openModal("review-add-modal");
+  }
+
+  function saveReview(event) {
+    event.preventDefault();
+
+    if (!requireAuth("Публикация отзыва")) {
+      return;
+    }
+
+    const userName =
+      document.getElementById("review-user").value;
+
+    const rating =
+      document.getElementById("review-rating").value;
+
+    const text =
+      document.getElementById("review-text").value.trim();
+
+    if (!userName || !text) {
+      return;
+    }
+
+    reviews.push({
+      id: Date.now(),
+      from: profile.name,
+      to: userName,
+      rating: Number(rating),
+      text,
+      date: new Date().toLocaleDateString("ru-RU")
+    });
+
+    saveUserWorkspace();
+
+    addNotification(
+      "Отзыв опубликован",
+      `Ваш отзыв для пользователя «${userName}» сохранён.`
+    );
+
+    closeModal("review-add-modal");
+    updateCounters();
+
+    showToast("Отзыв опубликован");
+  }
+
+  function openColorModal() {
+    document.getElementById("custom-color").value =
+      localStorage.getItem("trade_accent") || "#ff7a00";
+
+    openModal("color-modal");
+  }
+
+  function applyAccent(color) {
+    document.documentElement.style.setProperty(
+      "--accent",
+      color
+    );
+
+    document.documentElement.style.setProperty(
+      "--accent-hover",
+      color
+    );
+
+    localStorage.setItem("trade_accent", color);
+
+    document.getElementById("custom-color").value = color;
+
+    showToast("Цвет интерфейса изменён");
+  }
+
+  function applyCustomAccent() {
+    const color = document.getElementById("custom-color").value;
+
+    applyAccent(color);
+    closeModal("color-modal");
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle("light");
+
+    localStorage.setItem(
+      "trade_theme",
+      document.body.classList.contains("light")
+        ? "light"
+        : "dark"
+    );
+  }
+
+  function initSettings() {
+    const theme = localStorage.getItem("trade_theme");
+    const accent = localStorage.getItem("trade_accent");
+
+    if (theme === "light") {
+      document.body.classList.add("light");
+    }
+
+    if (accent) {
+      document.documentElement.style.setProperty(
+        "--accent",
+        accent
+      );
+
+      document.documentElement.style.setProperty(
+        "--accent-hover",
+        accent
+      );
+    }
+  }
+
+  function migrateOldProfileIfNeeded() {
+    if (!currentUser) {
+      return;
+    }
+
+    const user = getCurrentUserData();
+
+    if (!user) {
+      return;
+    }
+
+    if (!user.profile) {
+      user.profile = {
+        name: user.name,
+        city: "Город не указан",
+        about: "Пока ничего не рассказано о себе.",
+        avatar: DEFAULT_AVATAR
+      };
+
+      saveData("trade_users", users);
+    }
+  }
+
+  initSettings();
+  migrateOldProfileIfNeeded();
+  loadUserWorkspace();
+  updateAuthUI();
+  renderCategories();
+  renderProducts();
+  updateProfileView();
+</script>
+
+</body>
+</html>
